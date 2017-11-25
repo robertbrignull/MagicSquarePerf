@@ -35,28 +35,40 @@ std::chrono::duration<double> doNullRefTest() {
     return end - start;
 }
 
-void test(
+double test(
         std::string implName,
         BaseImpl *impl,
-        std::chrono::duration<double> nullRefTime)
+        double nullRefTime,
+        double directTime)
 {
     auto start = std::chrono::system_clock::now();
     int countFound = generate_or_check(impl);
     auto end = std::chrono::system_clock::now();
     delete impl;
 
-    std::chrono::duration<double> difference = end - start;
+    std::chrono::duration<double> differenced = end - start;
+    double difference = differenced.count() - nullRefTime;
 
     std::cout << implName << ": "
-              <<(difference.count() - nullRefTime.count()) << "s "
-              << "found " << countFound << " matches\n";
+              << "found " << countFound << " matches in "
+              << difference << "s";
+
+    if (directTime != 0.0) {
+        std::cout << " (" << ((int) (100.0 * difference / directTime))
+                  << "% of direct impl)";
+    }
+
+    std::cout << "\n";
+    return difference;
 }
 
 int main()
 {
-    std::chrono::duration<double> nullTime = doNullRefTest();
-    std::cout << "Reference time: " << nullTime.count() << "s\n";
+    std::chrono::duration<double> nullTimed = doNullRefTest();
+    double nullTime = nullTimed.count();
+    std::cout << "Reference time: " << nullTime << "s\n";
 
-    test("Direct", new Direct(), nullTime);
-    test("Oddity Heuristic", new OddityHeuristic(), nullTime);
+    double directTime = test("Direct", new Direct(), nullTime, 0.0);
+
+    test("Oddity Heuristic", new OddityHeuristic(), nullTime, directTime);
 }
