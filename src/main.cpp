@@ -8,6 +8,7 @@
 #include "impls/theirs/central_5/central_5.h"
 #include "impls/theirs/no_shifts/no_shifts.h"
 #include "impls/theirs/pre_cached/pre_cached.h"
+#include "impls/theirs/odd_cached/odd_cached.h"
 
 /*
  * This generates all possible combinations
@@ -80,4 +81,5 @@ int main()
     test("Central 5", new Central5(), nullTime, directTime);
     test("No Shifts", new NoShifts(), nullTime, directTime);
     test("Pre-cached", new PreCached(), nullTime, directTime);
+    test("Odd Heuristic + Caching", new OddCached(), nullTime, directTime);
 }
