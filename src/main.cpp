@@ -7,6 +7,7 @@
 #include "impls/theirs/oddity_heuristic/oddity_heuristic.h"
 #include "impls/theirs/central_5/central_5.h"
 #include "impls/theirs/no_shifts/no_shifts.h"
+#include "impls/theirs/pre_cached/pre_cached.h"
 
 /*
  * This generates all possible combinations
@@ -78,4 +79,5 @@ int main()
     test("Oddity Heuristic", new OddityHeuristic(), nullTime, directTime);
     test("Central 5", new Central5(), nullTime, directTime);
     test("No Shifts", new NoShifts(), nullTime, directTime);
+    test("Pre-cached", new PreCached(), nullTime, directTime);
 }
