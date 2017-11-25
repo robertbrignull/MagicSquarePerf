@@ -46,12 +46,15 @@ double test(
     auto end = std::chrono::system_clock::now();
     delete impl;
 
+    if (countFound != 8) {
+        std::cout << implName << ": found " << countFound << " matches\n";
+        return 0.0;
+    }
+
     std::chrono::duration<double> differenced = end - start;
     double difference = differenced.count() - nullRefTime;
 
-    std::cout << implName << ": "
-              << "found " << countFound << " matches in "
-              << difference << "s";
+    std::cout << implName << ": " << difference << "s";
 
     if (directTime != 0.0) {
         std::cout << " (" << ((int) (100.0 * difference / directTime))
