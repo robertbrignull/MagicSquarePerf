@@ -6,6 +6,7 @@
 #include "impls/NullReferenceImpl.h"
 #include "impls/theirs/oddity_heuristic/oddity_heuristic.h"
 #include "impls/theirs/central_5/central_5.h"
+#include "impls/theirs/no_shifts/no_shifts.h"
 
 /*
  * This generates all possible combinations
@@ -76,4 +77,5 @@ int main()
 
     test("Oddity Heuristic", new OddityHeuristic(), nullTime, directTime);
     test("Central 5", new Central5(), nullTime, directTime);
+    test("No Shifts", new NoShifts(), nullTime, directTime);
 }
