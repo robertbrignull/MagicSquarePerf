@@ -10,6 +10,7 @@
 #include "impls/theirs/pre_cached/pre_cached.h"
 #include "impls/theirs/odd_cached/odd_cached.h"
 #include "impls/theirs/comp_uint64/comp_uint64.h"
+#include "impls/mine/single_cmp/single_cmp.h"
 
 /*
  * This generates all possible combinations
@@ -78,10 +79,14 @@ int main()
 
     double directTime = test("Direct", new Direct(), nullTime, 0.0);
 
+    std::cout << "\nTheirs:\n";
     test("Oddity Heuristic", new OddityHeuristic(), nullTime, directTime);
     test("Central 5", new Central5(), nullTime, directTime);
     test("No Shifts", new NoShifts(), nullTime, directTime);
     test("Pre-cached", new PreCached(), nullTime, directTime);
     test("Odd Heuristic + Caching", new OddCached(), nullTime, directTime);
     test("Compare with uint64", new CompUInt64(), nullTime, directTime);
+
+    std::cout << "\nMine:\n";
+    test("Direct with single comparison", new SingleCmp(), nullTime, directTime);
 }
