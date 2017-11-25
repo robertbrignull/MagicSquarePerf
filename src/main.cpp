@@ -9,17 +9,17 @@
  * of 1-9 digits that may or may not
  * form a magic square
  */
-static std::string buffer = "000000000";
-void generate_or_check(BaseImpl *impl, int index_or_check = 8) {
-    if(index_or_check == -1){
-        if(impl->check_if_magic(buffer))
+static char buffer[] = "111111111";
+void generate_or_check(BaseImpl *impl) {
+    for (int s = 0; s < 387420489; s++) {
+        if (impl->check_if_magic(buffer))
             std::cout << buffer << " ";
-        return;
-    }
 
-    for(char i = 1; i < 10; ++i) {
-        buffer[index_or_check] = '0' + i;
-        generate_or_check(impl, index_or_check-1);
+        buffer[8]++;
+        for (int i = 8; i >= 0 && buffer[i] > '9'; i--) {
+            buffer[i] = '1';
+            buffer[i - 1]++;
+        }
     }
 }
 

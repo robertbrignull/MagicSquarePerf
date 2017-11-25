@@ -5,7 +5,7 @@ uint_fast64_t ideal_char_map =
         static_cast<uint_fast64_t>(0x1FF) << 49;
 uint_fast64_t char_map_one = 1u;
 
-bool Direct::check_if_magic(const std::string &sq) {
+bool Direct::check_if_magic(const char *sq) {
     if ((sq[0] + sq[1] + sq[2] != c15)
         || (sq[3] + sq[4] + sq[5] != c15)
         || (sq[6] + sq[7] + sq[8] != c15)
