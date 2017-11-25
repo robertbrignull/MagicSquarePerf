@@ -4,6 +4,7 @@
 #include "impls/BaseImpl.h"
 #include "impls/theirs/direct/direct.h"
 #include "impls/NullReferenceImpl.h"
+#include "impls/theirs/oddity_heuristic/oddity_heuristic.h"
 
 /*
  * This generates all possible combinations
@@ -57,4 +58,5 @@ int main()
     std::cout << "Reference time: " << nullTime.count() << "s\n";
 
     test("Direct", new Direct(), nullTime);
+    test("Oddity Heuristic", new OddityHeuristic(), nullTime);
 }
