@@ -9,6 +9,7 @@
 #include "impls/theirs/no_shifts/no_shifts.h"
 #include "impls/theirs/pre_cached/pre_cached.h"
 #include "impls/theirs/odd_cached/odd_cached.h"
+#include "impls/theirs/comp_uint64/comp_uint64.h"
 
 /*
  * This generates all possible combinations
@@ -82,4 +83,5 @@ int main()
     test("No Shifts", new NoShifts(), nullTime, directTime);
     test("Pre-cached", new PreCached(), nullTime, directTime);
     test("Odd Heuristic + Caching", new OddCached(), nullTime, directTime);
+    test("Compare with uint64", new CompUInt64(), nullTime, directTime);
 }
