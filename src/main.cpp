@@ -11,6 +11,7 @@
 #include "impls/theirs/odd_cached/odd_cached.h"
 #include "impls/theirs/comp_uint64/comp_uint64.h"
 #include "impls/mine/single_cmp/single_cmp.h"
+#include "impls/mine/string_tree/string_tree.h"
 
 /*
  * This generates all possible combinations
@@ -89,4 +90,5 @@ int main()
 
     std::cout << "\nMine:\n";
     test("Direct with single comparison", new SingleCmp(), nullTime, directTime);
+    test("String Tree", new StringTree(), nullTime, directTime);
 }
