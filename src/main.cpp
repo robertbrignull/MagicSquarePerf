@@ -1,5 +1,6 @@
 #include <iostream>
 #include <chrono>
+#include <algorithm>
 
 #include "impls/BaseImpl.h"
 #include "impls/theirs/direct/direct.h"
@@ -17,6 +18,7 @@
  * This generates all possible combinations
  * of 1-9 digits that may or may not
  * form a magic square
+ * i.e. each number may appear more than once.
  */
 static char comb_buffer[] = "111111111";
 int allCombinations(BaseImpl *impl)
@@ -32,6 +34,23 @@ int allCombinations(BaseImpl *impl)
             comb_buffer[i - 1]++;
         }
     }
+    return countFound;
+}
+
+/*
+ * This generates all possible permutations
+ * of 1-9 digits that may or may not
+ * form a magic square.
+ * i.e. each number will appear exactly once.
+ */
+static char perm_buffer[] = "123456789";
+int allPermutations(BaseImpl *impl)
+{
+    int countFound = 0;
+    do {
+        if (impl->check_if_magic(perm_buffer))
+            countFound++;
+    } while ( std::next_permutation(perm_buffer,perm_buffer+9) );
     return countFound;
 }
 
@@ -86,8 +105,10 @@ double test(
 }
 
 template <typename GenerateAndCheck>
-void doAllTests(GenerateAndCheck generateAndCheck, int iterations)
+void doAllTests(std::string generateName, GenerateAndCheck generateAndCheck, int iterations)
 {
+    std::cout << "Starting " << generateName << "\n\n";
+
     double nullTime = doNullRefTest(generateAndCheck, iterations);
     std::cout << "Reference time: " << nullTime << "s\n";
 
@@ -108,5 +129,6 @@ void doAllTests(GenerateAndCheck generateAndCheck, int iterations)
 
 int main()
 {
-    doAllTests(allCombinations, 5);
+    doAllTests("All Combinations", allCombinations, 5);
+    doAllTests("All Permutations", allPermutations, 500);
 }
