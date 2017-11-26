@@ -64,7 +64,7 @@ double doNullRefTest(
         generateAndCheck(new NullReferenceImpl());
     auto end = std::chrono::system_clock::now();
     std::chrono::duration<double> differenced = end - start;
-    return differenced.count() / iterations;
+    return differenced.count();
 }
 
 template <typename GenerateAndCheck>
@@ -91,27 +91,23 @@ double test(
     }
 
     std::chrono::duration<double> differenced = end - start;
-    double difference = (differenced.count() / iterations) - nullRefTime;
-
-    std::cout << implName << ": " << difference << "s";
+    double difference = differenced.count() - nullRefTime;
 
     if (directTime != 0.0) {
-        std::cout << " (" << ((int) (100.0 * difference / directTime))
-                  << "% of direct impl)";
+        std::cout << implName << ": "
+                  << ((int) (100.0 * difference / directTime))
+                  << "% of direct impl\n";
     }
 
-    std::cout << "\n";
     return difference;
 }
 
 template <typename GenerateAndCheck>
 void doAllTests(std::string generateName, GenerateAndCheck generateAndCheck, int iterations)
 {
-    std::cout << "Starting " << generateName << "\n\n";
+    std::cout << "Starting " << generateName << "\n";
 
     double nullTime = doNullRefTest(generateAndCheck, iterations);
-    std::cout << "Reference time: " << nullTime << "s\n";
-
     double directTime = test(generateAndCheck, iterations, "Direct", new Direct(), nullTime, 0.0);
 
     std::cout << "\nTheirs:\n";
@@ -125,6 +121,8 @@ void doAllTests(std::string generateName, GenerateAndCheck generateAndCheck, int
     std::cout << "\nMine:\n";
     test(generateAndCheck, iterations, "Direct with single comparison", new SingleCmp(), nullTime, directTime);
     test(generateAndCheck, iterations, "String Tree", new StringTree(), nullTime, directTime);
+
+    std::cout << "\n";
 }
 
 int main()
