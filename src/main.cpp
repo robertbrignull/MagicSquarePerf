@@ -18,48 +18,61 @@
  * of 1-9 digits that may or may not
  * form a magic square
  */
-static char buffer[] = "111111111";
-int generate_or_check(BaseImpl *impl)
+static char comb_buffer[] = "111111111";
+int allCombinations(BaseImpl *impl)
 {
     int countFound = 0;
     for (int s = 0; s < 387420489; s++) {
-        if (impl->check_if_magic(buffer))
+        if (impl->check_if_magic(comb_buffer))
             countFound++;
 
-        buffer[8]++;
-        for (int i = 8; i >= 0 && buffer[i] > '9'; i--) {
-            buffer[i] = '1';
-            buffer[i - 1]++;
+        comb_buffer[8]++;
+        for (int i = 8; i >= 0 && comb_buffer[i] > '9'; i--) {
+            comb_buffer[i] = '1';
+            comb_buffer[i - 1]++;
         }
     }
     return countFound;
 }
 
-std::chrono::duration<double> doNullRefTest() {
+template <typename GenerateAndCheck>
+double doNullRefTest(
+        GenerateAndCheck generateAndCheck,
+        int iterations)
+{
     auto start = std::chrono::system_clock::now();
-    generate_or_check(new NullReferenceImpl());
+    for (int i = 0; i < iterations; i++)
+        generateAndCheck(new NullReferenceImpl());
     auto end = std::chrono::system_clock::now();
-    return end - start;
+    std::chrono::duration<double> differenced = end - start;
+    return differenced.count() / iterations;
 }
 
+template <typename GenerateAndCheck>
 double test(
+        GenerateAndCheck generateAndCheck,
+        int iterations,
         std::string implName,
         BaseImpl *impl,
         double nullRefTime,
         double directTime)
 {
+    int countFound = 0;
     auto start = std::chrono::system_clock::now();
-    int countFound = generate_or_check(impl);
+    for (int i = 0; i < iterations; i++)
+        countFound += generateAndCheck(impl);
     auto end = std::chrono::system_clock::now();
     delete impl;
 
-    if (countFound != 8) {
-        std::cout << implName << ": found " << countFound << " matches\n";
+    if (countFound != 8 * iterations) {
+        std::cout << implName << ": found "
+                  << countFound << " matches over "
+                  << iterations << " iterations\n";
         return 0.0;
     }
 
     std::chrono::duration<double> differenced = end - start;
-    double difference = differenced.count() - nullRefTime;
+    double difference = (differenced.count() / iterations) - nullRefTime;
 
     std::cout << implName << ": " << difference << "s";
 
@@ -72,23 +85,28 @@ double test(
     return difference;
 }
 
-int main()
+template <typename GenerateAndCheck>
+void doAllTests(GenerateAndCheck generateAndCheck, int iterations)
 {
-    std::chrono::duration<double> nullTimed = doNullRefTest();
-    double nullTime = nullTimed.count();
+    double nullTime = doNullRefTest(generateAndCheck, iterations);
     std::cout << "Reference time: " << nullTime << "s\n";
 
-    double directTime = test("Direct", new Direct(), nullTime, 0.0);
+    double directTime = test(generateAndCheck, iterations, "Direct", new Direct(), nullTime, 0.0);
 
     std::cout << "\nTheirs:\n";
-    test("Oddity Heuristic", new OddityHeuristic(), nullTime, directTime);
-    test("Central 5", new Central5(), nullTime, directTime);
-    test("No Shifts", new NoShifts(), nullTime, directTime);
-    test("Pre-cached", new PreCached(), nullTime, directTime);
-    test("Odd Heuristic + Caching", new OddCached(), nullTime, directTime);
-    test("Compare with uint64", new CompUInt64(), nullTime, directTime);
+    test(generateAndCheck, iterations, "Oddity Heuristic", new OddityHeuristic(), nullTime, directTime);
+    test(generateAndCheck, iterations, "Central 5", new Central5(), nullTime, directTime);
+    test(generateAndCheck, iterations, "No Shifts", new NoShifts(), nullTime, directTime);
+    test(generateAndCheck, iterations, "Pre-cached", new PreCached(), nullTime, directTime);
+    test(generateAndCheck, iterations, "Odd Heuristic + Caching", new OddCached(), nullTime, directTime);
+    test(generateAndCheck, iterations, "Compare with uint64", new CompUInt64(), nullTime, directTime);
 
     std::cout << "\nMine:\n";
-    test("Direct with single comparison", new SingleCmp(), nullTime, directTime);
-    test("String Tree", new StringTree(), nullTime, directTime);
+    test(generateAndCheck, iterations, "Direct with single comparison", new SingleCmp(), nullTime, directTime);
+    test(generateAndCheck, iterations, "String Tree", new StringTree(), nullTime, directTime);
+}
+
+int main()
+{
+    doAllTests(allCombinations, 5);
 }
